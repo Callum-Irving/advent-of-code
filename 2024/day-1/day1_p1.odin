@@ -4,7 +4,6 @@ import "core:fmt"
 import "core:os"
 import "core:slice"
 import "core:strconv"
-import "core:strings"
 import "core:text/scanner"
 
 read_two_arrays :: proc(filename: string) -> ([dynamic]int, [dynamic]int, bool) {
@@ -16,33 +15,24 @@ read_two_arrays :: proc(filename: string) -> ([dynamic]int, [dynamic]int, bool) 
 	s: scanner.Scanner
 	scanner.init(&s, input, filename)
 
-	arr_1, arr_2: [dynamic]int
-
+	arr1, arr2: [dynamic]int
 	for scanner.peek_token(&s) != scanner.EOF {
-		id1, id2: int
-		ok: bool
-
 		scanner.scan(&s)
-		id1, ok = strconv.parse_int(scanner.token_text(&s))
-		if !ok {
-			delete(arr_1)
-			delete(arr_2)
+		id1, ok1 := strconv.parse_int(scanner.token_text(&s))
+		scanner.scan(&s)
+		id2, ok2 := strconv.parse_int(scanner.token_text(&s))
+
+		if !ok1 || !ok2 {
+			delete(arr1)
+			delete(arr2)
 			return nil, nil, false
 		}
 
-		scanner.scan(&s)
-		id2, ok = strconv.parse_int(scanner.token_text(&s))
-		if !ok {
-			delete(arr_1)
-			delete(arr_2)
-			return nil, nil, false
-		}
-
-		append(&arr_1, id1)
-		append(&arr_2, id2)
+		append(&arr1, id1)
+		append(&arr2, id2)
 	}
 
-	return arr_1, arr_2, true
+	return arr1, arr2, true
 }
 
 main :: proc() {
